@@ -48,12 +48,14 @@ object Functions extends App {
   def greetingForKids(name: String, age: Int): String = {
     s"Hi, my name is ${name} and I am ${age} years old."
   }
+
   println(greetingForKids("David", 12))
 
   def factorial(number: Int): Int = {
     if (number <= 0) 1
     else number * factorial(number - 1)
   }
+
   println(factorial(5))
 
   def fibonacci(number: Int): Int = {
@@ -61,6 +63,7 @@ object Functions extends App {
     else if (number == 2) 1
     else fibonacci(number - 1) + fibonacci(number - 2)
   }
+
   println(fibonacci(5))
 
   def isPrime(number: Int, start: Int = 2): Boolean = {
@@ -68,5 +71,16 @@ object Functions extends App {
     else if (start >= math.sqrt(number)) true
     else isPrime(number, start + 1)
   }
-  println(isPrime(120)) 
+
+  println(isPrime(37 * 17))
+
+  def isPrime2(n: Int): Boolean = {
+    def isPrimeUntil(t: Int): Boolean =
+      if (t <= 1) true
+      else n % t != 0 && isPrimeUntil(t - 1)
+
+    isPrimeUntil(n / 2)
+  }
+
+  println(isPrime2(37 * 17))
 }
