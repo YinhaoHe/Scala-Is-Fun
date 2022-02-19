@@ -1,10 +1,10 @@
 ## Scala
 
-![](./images/meme.png)
+![](./README.assets/meme.png)
 
 ### Values Variables Types
 
-![01part1basic](images/01part1basic.png)
+![01part1basic](README.assets/01part1basic.png)
 
 - `val` - immutable, cannot change vals
 
@@ -27,7 +27,7 @@
 
 ### Expressions
 
-![image-20220217204149552](images/02expressions.png)
+![image-20220217204149552](README.assets/02expressions.png)
 
 - Everything in Scala is an **Expression** NOT an Instruction
 
@@ -114,4 +114,6 @@ println(if(aCondition) 5 else 3)
     }
     ```
 
-- 
+### Type Inference
+
+![03typeInference](README.assets/03typeInference.png)
