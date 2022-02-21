@@ -15,6 +15,7 @@ object DefaultArgs extends App {
   val fact10 = trFact(10, 2)
 
   def savePicture(format: String = "jpg", width: Int = 1920, height: Int = 1080): Unit = println("saving picture")
+
   savePicture()
   // savePicture(800) - when only one parameter, complier will be confused
   savePicture(width = 800) // this time it will just fine

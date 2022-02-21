@@ -26,9 +26,9 @@ object Expressions extends App {
 
   // IF expression
   val aCondition = true
-  val aConditionedValue = if(aCondition) 5 else 3 // IF EXPRESSION
+  val aConditionedValue = if (aCondition) 5 else 3 // IF EXPRESSION
   println(aConditionedValue)
-  println(if(aCondition) 5 else 3)
+  println(if (aCondition) 5 else 3)
 
   // NEVER WRITE THIS AGAIN.
   var i = 0
@@ -54,13 +54,13 @@ object Expressions extends App {
     val y = 2
     val z = y + 1
 
-    if(z > 2) "hello" else "goodbye"
+    if (z > 2) "hello" else "goodbye"
 
   }
 
   // 1. difference between "hello world" vs println("hello world")?
-      // A string vs a unit
-      // println is also side effect
+  // A string vs a unit
+  // println is also side effect
 
   // 2.
 
@@ -72,7 +72,7 @@ object Expressions extends App {
   // True
 
   val someOtherValue = {
-    if(someValue) 239 else 986
+    if (someValue) 239 else 986
     42
   }
   println(someOtherValue)
