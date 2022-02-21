@@ -94,7 +94,7 @@ println(if(aCondition) 5 else 3)
       }
     ```
 
-- When you need loops, use recursion
+- When you need loops, use **TAIL** recursion
 
   - ```scala
       def aRepeatedFunction(aString: String, n: Int): String = {
@@ -116,4 +116,133 @@ println(if(aCondition) 5 else 3)
 
 ### Type Inference
 
-![03typeInference](README.assets/03typeInference.png)
+- Most of the time, complier can figure out the type on its own
+
+  - ![03typeInference](README.assets/03typeInference.png)
+
+  - ![image-20220218194243132](README.assets/image-20220218194243132.png)
+
+- Recursive functions need to be specified Typed, complier won't infer types
+  - ![image-20220218195056516](README.assets/image-20220218195056516.png)
+
+### Recursion
+
+- Tail Recursion
+
+- TAIL RECURSION = use recursive call as the LAST expression
+
+- use `@tailrec` in the function that has recursion, so the IDE will error if didn't use it as Tail Recursion
+
+  - Two examples below to show how to make big recursion work in Scala
+
+    - This one won't work - StackOverFlow
+
+    ```scala
+    def factorial(n: Int): Int =
+      if (n <= 1) 1
+      else {
+        val result = n * factorial(n-1)
+        result
+      }
+    ```
+
+    - But this one works:
+
+      ```scala
+      def anotherFactorial(n: Int): Int = {
+        def factHelper(x: Int, accumulator: Int): Int =
+          if (x <= 1) accumulator
+          else factHelper(x - 1, x * accumulator)
+      
+        factHelper(n, 1)
+      }
+      ```
+
+  - The second one, we write the `factHelper()` function call at the very last expression of this code path, so Scala will preserve the call stack for this function, so it doesn't consume a lot memory
+
+- AGAIN, when you need loops, USE TAIL RECURSION
+
+- **Rule of thumb: The number of recursions you want is the number of accumulators you need in the tailRec function**
+
+### Call-by-Name and Call-by-Value
+
+![image-20220219185753256](README.assets/image-20220219185753256.png)
+
+- Call by Value`:` - computer will evaluate the value first and throw that into the function
+- Call by Name`=>`  - computer throw the literal into function, the literal got evaluated when it is called in the code path
+
+```scala
+  def calledByValue(x: Long): Unit = {
+    println("by value: " + x)
+    println("by value: " + x)
+  }
+
+  def calledByName(x: => Long): Unit = {
+    println("by name: " + x)
+    println("by name: " + x)
+  }
+
+  calledByValue(System.nanoTime())
+  calledByName(System.nanoTime())
+
+// by value: 589136232950764
+// by value: 589136232950764
+// by name: 589136300788968
+// by name: 589136301563084
+```
+
+```scala
+  def calledByValue(x: Long): Unit = {
+    println("by value: " + x)
+    println("by value: " + x)
+  }
+
+ calledByValue(System.nanoTime())
+```
+
+Equals
+
+```scala
+  def calledByValue(x: Long): Unit = {
+    println("by value: " + 589136232950764L)
+    println("by value: " + 589136232950764L)
+  }
+
+ calledByValue(589136232950764L)
+```
+
+---
+
+However,
+
+```scala
+  def calledByName(x: => Long): Unit = {
+    println("by name: " + x)
+    println("by name: " + x)
+  }
+  
+  calledByName(System.nanoTime())
+```
+
+Equals
+
+```scala
+  def calledByName(x: => Long): Unit = {
+    println("by name: " + System.nanoTime())
+    println("by name: " + System.nanoTime())
+  }
+  
+  calledByName(System.nanoTime())
+```
+
+### Default and Named Arguments
+
+![image-20220221002913251](README.assets/image-20220221002913251.png)
+
+- Syntax
+
+```scala
+def trFact(n: Int, acc: Int = 1): Int =
+  if (n <= 1) acc
+  else trFact(n - 1, n * acc)
+```
