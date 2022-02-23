@@ -445,3 +445,128 @@ class Person(val name: String, favouriteMovie: String) {
     ```
 
   - This is super dope.
+
+### Scala Objects
+
+![image-20220223023152534](README.assets/image-20220223023152534.png)
+
+- Scala DOES NOT have Class Level Functionality ---- so called ("static")
+
+- Instead, Scala use Objects
+
+  - ```scala
+    object Person {
+      val N_EYES = 2
+      def canFly: Boolean = false
+    }
+    
+    // Access the val in object
+    println(Person.N_EYES)
+    println(Person.canFly)
+    ```
+
+- Can define Object just like Class, but Object doesn't take any parameters
+
+- Scala object is **singleton instance** ---- object is Type + its only instance
+
+- **Companions**
+
+  - Can write object and a class of the same name in a file or even in a scope. ---- called companions
+
+  - So whenever we access any value or methods, we are access it throught some kind of instance, singleton instance or regular instance
+
+  - So, Scala is truly an Object Oriented Language, and everything is Object.
+
+  - ```scala
+    object Person { // Type + its only instance
+      // "static"/"class" - level functionality
+      val N_EYES = 2
+      def canFly: Boolean = false
+    }
+    class Person {
+      // instance-level functionality
+    }
+    // Companions
+    ```
+
+- **Design Pattern, In practice, we define Factory Methods in Object**
+-   Scala Applications = Scala object with `def main(args: Array[String]): Unit`
+- That is why we `extends App` for every objects, because `App` already has a `def main(args: Array[String])` inside
+
+### Inheritance
+
+- `private` methods cannot be access outside the class
+
+- `protected` methods can be access only in its direct sub-class
+
+- `public` same old public
+
+- Constructors
+
+  - ```scala
+    // constructors
+    class Person(name: String, age: Int) {
+      def this(name: String) = this(name, 0)
+    }
+    class Adult(name: String, age: Int, idCard: String) extends Person(name)
+    ```
+
+- Overriding
+
+  - ```scala
+    // overriding
+    class Dog(override val creatureType: String) extends Animal {
+      // override val creatureType: String = "domestic"
+      override def eat = println("crunch, crunch")
+    }
+    
+    // Or
+    class Dog1(dogType: String) extends Animal {
+      override val creatureType: String = dogType
+    }
+    
+    val dog = new Dog("K9")
+    dog.eat
+    println(dog.creatureType)
+    ```
+
+- Type substitution (broad: polymorphism)
+
+  - ```scala
+    // Type substitution (broad: polymorphism)
+    val unknownAnimal: Animal = new Dog("K9")
+    unknownAnimal.eat
+    ```
+
+- OverRIDING vs overLOADING
+
+  - Overriding --- define method of same name in sub classes
+  - Overloading --- define multiple methods of different signatures of same name in a  same class
+
+- super --- to call father class's methods `super.eat`
+
+- Preventing overrides
+
+  - 1. use `final` keyword on members
+
+  - 2. use `final` keyword on entire super class --- the super class can no longer be inherited
+       - Numerical / String class are all final in Scala
+
+  - 3. use `sealed` keyword on super class --- extend classes allowed in THIS FILE, prevent extension in other files
+
+  - ```scala
+    class Animal {
+      val creatureType = "wide"
+      final def eat = println("nomnom")
+    }
+    
+    final class Animal {
+      val creatureType = "wide"
+      def eat = println("nomnom")
+    }
+    
+    sealed class Animal {
+      val creatureType = "wide"
+      def eat = println("nomnom")
+    }
+    ```
