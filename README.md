@@ -309,3 +309,139 @@ def trFact(n: Int, acc: Int = 1): Int =
   - `\` escape character will not be escaped in `raw"this is \n a new line"`
 
   - but it will be escaped when works with injected value like `raw"$escaped"`
+
+### OO Basics
+
+![image-20220221225057664](README.assets/image-20220221225057664.png)
+
+- constructor can print `person.age`
+
+  - ```scala
+    class Person (name: String, val age: Int) // 
+    ```
+
+- cannot print `person.age`
+
+  - ```scala
+    class Person (name: String, age: Int)
+    ```
+
+- Need to add a `var` or `val` to the parameters, to let it be fields
+
+- Field - values in a class
+
+  - ```scala
+    val x = 2 // Field
+    ```
+
+- Methods - functions in a class
+
+  - ```scala
+    // method
+    def greet(name: String): Unit = println(s"${this.name} says: Hi, $name")
+    ```
+
+- Overloading
+
+  - ```scala
+    // overloading
+    def greet(): Unit = println(s"Hi, I am $name") // if no parameter, same as this.name
+    ```
+
+- Multiple constructors
+
+  - ```scala
+    // multiple constructors
+    def this(name: String) = this(name, 0)
+    def this() = this("John Doe")
+    ```
+
+- **Object Immutability** - whenever you make changes to an object, you create a new object instance.
+
+### Syntactic Sugar Method Notations
+
+![image-20220223015618045](README.assets/image-20220223015618045.png)
+
+```scala
+class Person(val name: String, favouriteMovie: String) {
+  def likes(movie: String): Boolean = movie == favouriteMovie
+  def hangOutWith(person: Person): String = s"${this.name} is hanging out with ${person.name}"
+}
+```
+
+- When only one parameter for a method - `def likes(movie: String)`
+
+  - ```scala
+    val mary = new Person("Mary", "Inception")
+    println(mary.likes("Inception"))
+    println(mary likes "Inception") // equivalent
+    // infix notation = operator notation
+    ```
+
+- In-fix notation, ALL operators are methods!!! 
+
+  - Can define a method's name as a "+" plus sign, which is allowed in Scala
+
+  - ```scala
+    def +(person: Person): String = s"${this.name} is hanging out with ${person.name}"
+    ```
+
+  - The method actually works like an "Operator" in below example
+
+  - ```scala
+    // "operators" in Scala
+    val tom = new Person("Tom", "Fight Club")
+    println(mary + tom)
+    println(mary.+(tom))
+    ```
+
+  -  Another good example would be plus operator is also a METHOD
+
+  - ```scala
+    println(1 + 2)
+    println(1.+(2))
+    ```
+
+- Prefix notation
+
+  - unary prefix
+
+    ```scala
+    val x = -1 // equivalent with 1.unary_-
+    val y = 1.unary_-
+    ```
+
+  - **unary_prefix only works with - + ~ !**
+
+- Postfix notation
+
+  - Only availible for methods without parameters
+
+  - ```scala
+    // Postfix notation
+    println(mary.isAlive)
+    println(mary isAlive)
+    ```
+
+- `def apply()`
+
+  - When you see an object gets called like a function, Scala will go into that object and look for a method call `apply` - example below
+
+  - Can call `mary()` like a function
+
+  - ```scala
+    class Person(val name: String, favouriteMovie: String) {
+      def likes(movie: String): Boolean = movie == favouriteMovie
+      def +(person: Person): String = s"${this.name} is hanging out with ${person.name}"
+      def unary_! : String = s"${name}, what the heck!?"
+      def isAlive : Boolean = true
+      def apply(): String = s"Hi, my name is $name and I like $favouriteMovie"
+    }
+    
+    
+      // apply
+      println(mary.apply())
+      println(mary())
+    ```
+
+  - This is super dope.
