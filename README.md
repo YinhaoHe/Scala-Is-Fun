@@ -71,12 +71,12 @@ println(if(aCondition) 5 else 3)
 
     - ```scala
         val aCodeBlock = {
-      
+        
           val y = 2
           val z = y + 1
-      
+        
           if(z > 2) "hello" else "goodbye"
-      
+        
         }
       ```
 
@@ -283,7 +283,7 @@ def trFact(n: Int, acc: Int = 1): Int =
       val greeting = s"Hello, my name is $name and I am $age years old"
       val anotherGreeting = s"Hello, my name is $name and I will be turning ${age + 1} years old"
       println(anotherGreeting)
-    
+      
       // F-interpolators
       val speed = 1.2f
       val myth = f"$name can eat $speed%2.2f burgers per minutes"
@@ -299,15 +299,15 @@ def trFact(n: Int, acc: Int = 1): Int =
       println(raw"This is a \n newline")
       val escaped = "This is a \n newline"
       println(raw"$escaped")
-    
-    
+  
+  
     This is a \n newline
     This is a 
      newline
     ```
-
+  
   - `\` escape character will not be escaped in `raw"this is \n a new line"`
-
+  
   - but it will be escaped when works with injected value like `raw"$escaped"`
 
 ### OO Basics
@@ -570,3 +570,136 @@ class Person(val name: String, favouriteMovie: String) {
       def eat = println("nomnom")
     }
     ```
+
+- `???` return nothing
+
+### Abstract and Trait
+
+- Need to leave some methods/fields empty --- called abstract
+- Cannot be instantiated
+- traits
+  - A class can have multiple traits
+  - use keyword `with`
+  - similiar to Java Interfaces
+- Both abstract class and trait can have abstract or non-abstract members
+- traits vs abstract classes
+  - 1 - traits do not have constructor parameters
+  - 2 - multiple traits may be inherited by the same class
+  - 3 - traits = behavior, abstract class = "thing"
+    - When talking about a thing, use class; when talking about doing things/behavior, use traits
+
+![image-20220223195638471](README.assets/image-20220223195638471.png)
+
+- `???` returns `nothing`, when compile, complier will give a not implemented error
+
+  - ```scala
+    def head: Int = ???
+    ```
+
+- `throw new NoSuchElementException` --- throw an exception in Scala returns `nothing`
+
+![image-20220224221943932](README.assets/image-20220224221943932.png)
+
+### Generics
+
+![image-20220226041656960](README.assets/image-20220226041656960.png)
+
+![image-20220226041806943](README.assets/image-20220226041806943.png)
+
+- Code reusablity
+
+  - ```scala
+    class MyList[A] {
+      // use the type A inside the class defination
+    
+    }
+    
+    class MyMap[Key, Value]
+    
+    val lisfOfIntegers = new MyList[Int]
+    val listOfStrings = new MyList[String]
+    ```
+
+- **Class** and **traits** can both use generic types
+
+- But, **Objects cannot** use generic types
+
+- Use generic methods
+
+  - ```scala
+    // generic methods
+    object MyList {
+      def empty[A]: MyList[A] = ???
+    }
+    val emptyListOfIntegers = MyList.empty[Int]
+    ```
+
+- **Variance problem**
+
+  - ```scala
+    // variance problem
+    class Animal
+    class Cat extends Animal
+    class Dog extends Animal
+    ```
+
+    - Question: if Cat extends Animal, does list of Cats extend Animal?
+
+      1. Yes, List[Cat] extends List[Animal] = **Covariance**
+
+      Ok to replace animal list with Cat list --- 小的换大的
+
+      ```scala
+      class CovariantList[+A]
+      val animal: Animal = new Cat
+      val animalList: CovariantList[Animal] = new CovariantList[Cat]
+      // animalList.add(new Dog) ??? Can I add dog? HARD QUESTION
+      // Yes, but adding a Dog to Cat list will pollute the animalList
+      ```
+
+      2. No = **Invariance**
+
+      Normal usage, only put in same type
+
+      ```scala
+      // 2. No = Invariance
+      class InvarianceList[A]
+      // Can only put the animal Type into the list
+      val invariantAnimalList: InvarianceList[Animal] = new InvarianceList[Animal]
+      ```
+
+      3. Hell, no! **Contravariance**
+
+      Ok to replace cat with Animal --- 大的换小的
+
+      ```scala
+      // 3. Hell, no! Contravariance
+      class Trainer[-A]
+      val trainer: Trainer[Cat] = new Trainer[Animal]
+      ```
+
+- Bounded types
+
+  - Upper bounded types
+
+  ```scala
+  // bounded types
+  class Cage[A <: Animal] (animal: A) // class Cage only allows types that are subtypes of Animal
+  val cage = new Cage(new Dog)
+  ```
+
+  - Lower bounded types
+
+  ```scala
+  class MyList[+A] {
+    // use the type A inside the class defination
+    def add[B >: A](element: B): MyList[B] = ???
+    /*
+      A = Cat
+      B = Animal
+    * */
+  }
+  // B is super type of A
+  // This solves the problem when adding a Dog to a Cat list
+  // It should turn the list into a Animal List instead
+  ```

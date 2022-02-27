@@ -3,7 +3,7 @@ package lectures.part2oop
 /**
  * Created by yinhaohe on Feb 23, 2022
  */
-object InheritanceAndTraits extends App {
+object Inheritance extends App {
 
   // signle class inheritance --- can only inherits one class at a time
   class Animal {
