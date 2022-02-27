@@ -703,3 +703,272 @@ class Person(val name: String, favouriteMovie: String) {
   // This solves the problem when adding a Dog to a Cat list
   // It should turn the list into a Animal List instead
   ```
+
+### Anonymous Class
+
+![image-20220227021017767](README.assets/image-20220227021017767.png)
+
+- Even using anonymous class, remember to pass in the parameter to the super class you are extending
+- Anonymous class works for both abstract classes and normal classes
+
+```scala
+// Example with abstract class
+abstract class Animal {
+  def eat: Unit
+}
+
+// anonymous class
+val funnyAnimal: Animal = new Animal {
+  override def eat: Unit = println("ahahahahahhaha")
+}
+
+
+
+// Example with normal Class
+class Person(name: String) {
+  def sayHi: Unit = println(s"Hi, my name is $name, how can I help?")
+}
+
+val jim = new Person("Jim") {
+  override def sayHi: Unit = println(s"Hi, my name is Jim, how can I be of service?")
+}
+```
+
+### A Scala List From Stratch
+
+```scala
+package exercises
+
+/**
+ * Created by yinhaohe on Feb 23, 2022
+ */
+abstract class MyList[+A]{
+
+  /*
+    head = first element of the list
+    tail = remainder of the list
+    isEmpty = is this list empty
+    add(int) => new list with this element added
+    toString => a string representation of the list
+  */
+
+  def head: A
+  def tail: MyList[A]
+  def isEmpty: Boolean
+  def add[B >: A](element: B): MyList[B]
+  def printElements: String
+  // polymorphic call
+  override def toString: String = "[" + printElements + "]"
+
+  def map[B] (transformer: MyTransformer[A, B]) : MyList[B]
+  def flatMap[B] (transformer: MyTransformer[A, MyList[B]]) : MyList[B]
+  def filter(predicate: MyPredicate[A]) : MyList[A]
+
+  // concatenation
+  def ++[B >: A](list: MyList[B]) : MyList[B]
+}
+
+object Empty extends MyList[Nothing] {
+  def head: Nothing = throw new NoSuchElementException
+  def tail: MyList[Nothing] = throw new NoSuchElementException
+  def isEmpty: Boolean = true
+  def add[B >: Nothing](element: B): MyList[B] = new Cons(element, Empty)
+  def printElements: String = ""
+
+  def map[B] (transformer: MyTransformer[Nothing, B]) : MyList[B] = Empty
+  def flatMap[B] (transformer: MyTransformer[Nothing, MyList[B]]) : MyList[B] = Empty
+  def filter(predicate: MyPredicate[Nothing]) : MyList[Nothing] = Empty
+  def ++[B >: Nothing] (list: MyList[B]): MyList[B] = list
+}
+
+class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
+  def head: A = h
+  def tail: MyList[A] = t
+  def isEmpty: Boolean = false
+  def add[B >: A](element: B): MyList[B] = new Cons(element, this)
+  def printElements: String =
+    if(t.isEmpty) "" + h
+    else s"$h ${t.printElements}"
+
+  /*
+  * [1, 2, 3].filter(n % 2 == 0) =
+      [2, 3].filter(n % 2 == 0) =
+      = new Cons(2, [3].filter(n % 2 == 0))
+      = new Cons(2, Empty.filter(n % 2 == 0))
+      = new Cons(2, Empty)
+  * */
+
+  def filter(predicate: MyPredicate[A]): MyList[A] =
+    if (predicate.test(h)) new Cons(h, t.filter(predicate))
+    else t.filter(predicate)
+
+  /*
+  * [1, 2, 3].map(n * 2)
+    = new Cons(2, [2, 3].map(n * 2))
+    = new Cons(2, new Cons(4, [3].map(n * 2)))
+    = new Cons(2, new Cons(4, new Cons(6, Empty.map(n * 2))))
+    = new Cons(2, new Cons(4, new Cons(6, Empty)))
+  * */
+
+  def map[B] (transformer: MyTransformer[A, B]) : MyList[B] =
+    new Cons(transformer.transform(h), t.map(transformer))
+
+  /*
+  * [1, 2] ++ [3, 4, 5]
+  = new Cons(1, [2] ++ [3, 4, 5])
+  = new Cons(1, new Cons(2, Empty ++ [3, 4, 5]))
+  = new Cons(1, new Cons(2, new Cons(3, new Cons(4, new Cons(5, Empty)))))
+  * */
+  def ++[B >: A](list: MyList[B]) : MyList[B] = new Cons(h, t ++ list)
+
+  /*
+  * [1, 2].flatMap(n => [n, n + 1])
+  = [1, 2] ++ 2.flatMap(n => [n, n + 1])
+  = [1, 2] ++ [2, 3] ++ Empty.flatMap(n => [n, n + 1])
+  = [1, 2] ++ [2, 3] ++ Empty
+  = [1, 2, 2, 3]
+  * */
+  def flatMap[B] (transformer: MyTransformer[A, MyList[B]]) : MyList[B] =
+    transformer.transform(h) ++ t.flatMap(transformer)
+}
+
+trait MyPredicate[-T] {
+  def test(elem: T): Boolean
+}
+
+trait MyTransformer[-A, B] {
+  def transform(elem: A): B
+}
+
+object ListTest extends App {
+  val listOfIntegers: MyList[Int] = new Cons(1, new Cons(2, new Cons(3, Empty)))
+  val anotherListOfIntegers: MyList[Int] = new Cons(4, new Cons(5, Empty))
+  val listOfStrings: MyList[String] = new Cons("Hello", new Cons("Scala", Empty))
+
+  println(listOfIntegers.toString)
+  println(listOfStrings.toString)
+
+  println(listOfIntegers.map(new MyTransformer[Int, Int] {
+    override def transform(elem: Int): Int = elem * 2
+  }).toString)
+
+  println(listOfIntegers.filter(new MyPredicate[Int] {
+    override def test(elem: Int): Boolean = elem % 2 == 0
+  }).toString)
+
+  println((listOfIntegers ++ anotherListOfIntegers).toString)
+  println(listOfIntegers.flatMap(new MyTransformer[Int, MyList[Int]] {
+    override def transform(elem: Int): MyList[Int] = new Cons(elem, new Cons(elem + 1, Empty))
+  }).toString)
+}
+```
+
+### Case classes
+
+![image-20220227034155753](README.assets/image-20220227034155753.png)
+
+```scala
+case class Person(name: String, age: Int)
+```
+
+- class parameters are frelds
+
+```scala
+// 1. class parameters are frelds
+val jim = new Person("Jim", 34)
+println(jim.name)
+```
+
+- sensible toString
+
+```scala
+// 2. sensible toString
+// println(instance) = println(instance.toString) // syntactic sugar
+println(jim)
+```
+
+- equals and hashCode implemented Out of the Box
+
+```scala
+// 3. equals and hashCode implemented Out of the Box
+val jim2 = new Person("Jim", 34)
+println(jim == jim2)
+```
+
+- Case classes have handy copy method
+
+```scala
+// 4. Case classes have handy copy method
+val jim3 = jim.copy(age = 45)
+println(jim3)
+```
+
+- Case classes have companion objects, with handy apply() method
+
+```scala
+// 5. Case classes have companion objects
+// it called apply() method, which is constructor in case classes
+val thePerson = Person
+val mary = Person("Mary", 23)
+```
+
+- Case classes are serializable
+
+```scala
+Akka - actually send case classes through network
+```
+
+- Case classes extractor patterns = CCs can be used in PATTERN MATCHING
+- There are also case objects --- almost identical to case class except itself is an object already
+
+```scala
+case object UnitedKingdom {
+  def name: String = "The UK of GB and Ni"
+}
+```
+
+### Enums
+
+```scala
+package lectures.part2oop
+
+/**
+ * Created by yinhaohe on Feb 27, 2022
+ */
+object Enums {
+  enum Permissions {
+    case READ, WRITE, EXECUTE, NONE
+
+    // add fields/methods
+    def openDocument():Unit =
+      if (this == READ) println("opening document...")
+      else println("reading not allowed.")
+  }
+
+  val somePermissions: Permissions = Permissions.READ
+
+  // constructor args
+  enum PermissionsWithBits(bits: Int) {
+    case READ extends PermissionsWithBits(4) // 100
+    case WRITE extends PermissionsWithBits(2) // 010
+    case EXCUTE extends PermissionsWithBits(1) // 001
+    case NONE extends PermissionsWithBits(0) // 000
+  }
+
+  object PermissionsWithBits {
+    def fromBits(bits: Int): PermissionsWithBits = // whatever
+      PermissionsWithBits.NONE
+  }
+
+  // standard API
+  val somePermissionsOrdinal = somePermissions.ordinal
+  val allPermissions = PermissionsWithBits.values // array of all possible values of the enum
+  val readPermission: Permissions = Permissions.valueOf("READ")
+
+  def main(args: Array[String]): Unit = {
+    somePermissions.openDocument()
+    println(somePermissionsOrdinal)
+    println(readPermission)
+  }
+}
+```
