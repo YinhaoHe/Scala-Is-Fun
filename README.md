@@ -1,6 +1,8 @@
-## Scala
+# Scala
 
 ![](./README.assets/meme.png)
+
+## Scala with OOP
 
 ### Values Variables Types
 
@@ -1144,5 +1146,5 @@ val sqlD = new SqlDate(2018, 5, 4)
       // scala --- Int, Nothing, Function
       // scala.Predef --- println, ???
 
-### Functional Programming
+## Functional Programming
 
