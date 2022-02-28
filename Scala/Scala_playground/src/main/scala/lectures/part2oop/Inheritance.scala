@@ -8,6 +8,7 @@ object Inheritance extends App {
   // signle class inheritance --- can only inherits one class at a time
   class Animal {
     val creatureType = "wide"
+
     def eat = println("nomnom")
   }
 
@@ -26,6 +27,7 @@ object Inheritance extends App {
   class Person(name: String, age: Int) {
     def this(name: String) = this(name, 0)
   }
+
   class Adult(name: String, age: Int, idCard: String) extends Person(name)
 
   // overriding

@@ -972,3 +972,177 @@ object Enums {
   }
 }
 ```
+
+### Exceptions
+
+![image-20220227220041611](README.assets/image-20220227220041611.png)
+
+- throw an exception --- `throw new NullPointerException`
+- throwable classes extend the **[Throwable type](https://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html)** class.
+- **Exception** and **Error** are the major **Throwable** subtype
+- Try Catch Exceptions
+- Define your own exceptions
+
+A Good Example:
+
+```scala
+package lectures.part2oop
+
+/**
+ * Created by yinhaohe on Feb 27, 2022
+ */
+object Exceptions extends App {
+
+  val x: String = null
+  // println(x.length)
+  // this will crash with a NPE
+
+  // 1. throwing exceptions
+  // val aWeirdValue: String = throw new NullPointerException
+
+  // throwable classes extend the Throwable class.
+  // Exception and Error are the major Throwable subtypes
+
+  // 2. how to catch exceptions
+  def getInt(withExceptions: Boolean): Int =
+    if (withExceptions) throw new RuntimeException("No int for you!")
+    else 42
+
+  val potentialFail = try {
+    // code that might fail
+    getInt(false)
+  } catch {
+    case e: NullPointerException => println("caught a Runtim exception")
+  } finally {
+    // code that will get excuted NO MATTER WHAT
+    // optional
+    // does not influence the return type of this expression
+    // use finally only for side effects --- E.G. log something into files
+    println("finally")
+  }
+
+  println(potentialFail)
+
+  // 3. how to define your own exceptions
+  class MyException extends Exception
+
+  val exception = new MyException
+
+  //  throw exception
+
+  /*
+    1.  Crash your program with an OutOfMemoryError
+    2.  Crash with SOError
+    3.  PocketCalculator
+        - add(x,y)
+        - subtract(x,y)
+        - multiply(x,y)
+        - divide(x,y)
+        Throw
+          - OverflowException if add(x,y) exceeds Int.MAX_VALUE
+          - UnderflowException if subtract(x,y) exceeds Int.MIN_VALUE
+          - MathCalculationException for division by 0
+   */
+
+  // OOM
+  // val array = Array.ofDim(Int.MaxValue)
+
+  // SOError
+  def loop: Int = 1 + loop
+  // val endlessLoop = loop
+
+  class OverflowException extends RuntimeException
+
+  class UnderflowException extends RuntimeException
+
+  class MathCalculationException extends RuntimeException("Division by 0")
+
+  object PocketCalculator {
+    def add(x: Int, y: Int) = {
+      val result = x + y
+
+      if (x > 0 && y > 0 && result < 0) throw new OverflowException
+      else if (x < 0 && y < 0 && result > 0) throw new UnderflowException
+      else result
+    }
+
+    def subtract(x: Int, y: Int) = {
+      val result = x - y
+
+      if (x > 0 && y < 0 && result < 0) throw new OverflowException
+      else if (x < 0 && y > 0 && result > 0) throw new UnderflowException
+      else result
+    }
+
+    def multiply(x: Int, y: Int) = {
+      val result = x * y
+      if (x > 0 && y > 0 && result < 0) throw new OverflowException
+      else if (x < 0 && y < 0 && result < 0) throw new OverflowException
+      else if (x > 0 && y < 0 && result > 0) throw new UnderflowException
+      else if (x < 0 && y > 0 && result > 0) throw new UnderflowException
+      else result
+    }
+
+    def divide(x: Int, y: Int) = {
+      if (y == 0) throw new MathCalculationException
+      else x / y
+    }
+  }
+
+  // println(PocketCalculator.add(Int.MaxValue, 10))
+  // println(PocketCalculator.divide(2, 0))
+}
+```
+
+### Packaging and Imports
+
+![image-20220227223417735](README.assets/image-20220227223417735.png)
+
+- Package members are accessible by their simple name
+- If not package members, import the package
+- Packages are in hierarchy
+- Matching folder structure
+- `package lectures.part2oop`  --- is actually NOT **expression**
+- package object --- **universal constants/methods**
+  - package object can only be one per package
+- Group import 
+
+```scala
+import playground.{ATestClass, PrinceCharming}
+```
+
+- Import all
+
+```scala
+import playground._
+```
+
+- Name alias
+
+```scala
+import playground.{ATestClass => AnotherName, PrinceCharming}
+```
+
+- Same name import issue
+  - Deal with same name import issues
+
+```scala
+import java.util.Date
+import java.sql.{Date => SqlDate}
+
+// 1. use Fully Qualified names
+val date = new Date
+val sqlDate = new java.sql.Date(2018, 5, 4)
+
+// 2. use aliasing
+val sqlD = new SqlDate(2018, 5, 4)
+```
+
+- There are some default imports
+  -   // default imports
+      // java.lang --- String, Object, Exception
+      // scala --- Int, Nothing, Function
+      // scala.Predef --- println, ???
+
+### Functional Programming
+

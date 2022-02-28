@@ -7,16 +7,25 @@ object MethodNotations extends App {
 
   class Person(val name: String, favouriteMovie: String, val age: Int = 0) {
     def likes(movie: String): Boolean = movie == favouriteMovie
+
     def +(person: Person): String = s"${this.name} is hanging out with ${person.name}"
+
     def +(nickname: String): Person = {
       new Person(s"$name ($nickname)", favouriteMovie)
     }
+
     def unary_! : String = s"${name}, what the heck!?"
+
     def unary_+ : Person = new Person(name, favouriteMovie, age + 1)
-    def isAlive : Boolean = true
+
+    def isAlive: Boolean = true
+
     def apply(): String = s"Hi, my name is $name and I like $favouriteMovie"
+
     def apply(time: Int): String = s"$name watched $favouriteMovie $time times"
+
     def learns(thing: String): String = s"$name learns $thing"
+
     def learnScala = this learns "Scala"
   }
 

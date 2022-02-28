@@ -23,7 +23,7 @@ object OOBasics extends App {
 }
 
 // constructor
-class Person (name: String, val age: Int = 0) {
+class Person(name: String, val age: Int = 0) {
   // body
   val x = 2 // Field
 
@@ -37,6 +37,7 @@ class Person (name: String, val age: Int = 0) {
 
   // multiple constructors
   def this(name: String) = this(name, 0)
+
   def this() = this("John Doe")
 }
 
@@ -53,13 +54,15 @@ class Person (name: String, val age: Int = 0) {
   - copy (new year of release) = new instance of Novel
  */
 
-class Writer (val firstName: String, val surName: String, val year: Int) {
+class Writer(val firstName: String, val surName: String, val year: Int) {
   def getFullName(): String = s"$firstName $surName"
 }
 
-class Novel (val name: String, val year: Int, val author: Writer) {
+class Novel(val name: String, val year: Int, val author: Writer) {
   def getAuthorAge(): Int = year - author.year
+
   def isWritterBy(author: Writer): Boolean = author == this.author
+
   def copy(newYear: Int): Novel = new Novel(this.name, newYear, this.author)
 }
 
@@ -76,16 +79,19 @@ class Counter(val count: Int = 0) {
     println("Incrementing")
     new Counter(count + 1) // immutability
   }
+
   def dec = {
     println("Decrementing")
     new Counter(count - 1)
   }
-//  def inc(n: Int) = new Counter(count + n)
+
+  //  def inc(n: Int) = new Counter(count + n)
   def inc(n: Int): Counter = {
     if (n <= 0) this
     else inc.inc(n - 1)
   }
-//  def dec(n: Int) = new Counter(count - n)
+
+  //  def dec(n: Int) = new Counter(count - n)
   def dec(n: Int): Counter = {
     if (n <= 0) this
     else dec.dec(n - 1)

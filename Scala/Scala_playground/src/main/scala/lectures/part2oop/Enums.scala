@@ -8,7 +8,7 @@ object Enums {
     case READ, WRITE, EXECUTE, NONE
 
     // add fields/methods
-    def openDocument():Unit =
+    def openDocument(): Unit =
       if (this == READ) println("opening document...")
       else println("reading not allowed.")
   }
