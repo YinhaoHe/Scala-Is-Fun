@@ -1148,3 +1148,5 @@ val sqlD = new SqlDate(2018, 5, 4)
 
 ## Functional Programming
 
+### What is Function
+
